@@ -9,7 +9,7 @@ export default function ApplicantDashboard() {
 
       <div className="grid gap-4">
         <a
-          href="/new-loan"
+          href="/loan-form"
           className="block bg-white p-6 rounded-xl shadow border hover:shadow-lg transition"
         >
           <h2 className="text-xl font-semibold text-[#003366]">New Loan Application</h2>
