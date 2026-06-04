@@ -13,7 +13,7 @@ export default function NewLoanPage() {
         </p>
 
         <a
-          href="/"
+          href="/loan-form"
           className="inline-block bg-[#003366] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#00264d] transition"
         >
           Start Loan Application
