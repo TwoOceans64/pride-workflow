@@ -16,7 +16,8 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full border border-gray-300 p-3 rounded-lg"
+              className="w-full border border-gray-300 p-3 rounded-lg 
+                         text-gray-900 placeholder-gray-700 placeholder-opacity-100"
               required
             />
           </div>
@@ -28,7 +29,8 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Enter your password or ID"
-              className="w-full border border-gray-300 p-3 rounded-lg"
+              className="w-full border border-gray-300 p-3 rounded-lg 
+                         text-gray-900 placeholder-gray-700 placeholder-opacity-100"
               required
             />
           </div>
