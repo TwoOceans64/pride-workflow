@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function NewLoanPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [occupation, setOccupation] = useState("");
@@ -10,7 +13,10 @@ export default function NewLoanPage() {
   const [loanAmount, setLoanAmount] = useState("");
   const [purpose, setPurpose] = useState("");
   const [harvestMonth, setHarvestMonth] = useState("");
+
   const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [reference, setReference] = useState("");
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
@@ -45,7 +51,12 @@ export default function NewLoanPage() {
         throw new Error("Webhook error");
       }
 
-      alert("Loan request submitted successfully!");
+      // Generate reference number
+      const ref = "LN-" + Date.now();
+      setReference(ref);
+
+      // Show success screen
+      setSuccess(true);
     } catch (err) {
       console.error("Loan submission error:", err);
       alert("Failed to submit loan request.");
@@ -54,6 +65,50 @@ export default function NewLoanPage() {
     setSubmitting(false);
   };
 
+  // ⭐ SUCCESS SCREEN ⭐
+  if (success) {
+    return (
+      <div className="min-h-screen bg-sacco-bg p-6 flex justify-center items-center">
+        <div className="bg-white p-8 rounded-xl shadow-xl border border-sacco-blue/20 text-center max-w-md w-full">
+          <div className="flex justify-center mb-4">
+            <div className="h-20 w-20 bg-green-500 text-white rounded-full flex items-center justify-center text-5xl">
+              ✓
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-semibold text-sacco-blue mb-2">
+            Loan Submitted Successfully
+          </h2>
+
+          <p className="text-gray-600 mb-4">
+            Thank you, {fullName}. Your loan request has been received and is now under review.
+          </p>
+
+          <p className="text-gray-700 font-medium mb-6">
+            Reference Number: <span className="text-sacco-blue">{reference}</span>
+          </p>
+
+          <div className="space-y-3">
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="w-full bg-sacco-blue text-white p-3 rounded-lg font-medium hover:bg-[#00264d] transition"
+            >
+              Go to Dashboard
+            </button>
+
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full bg-gray-200 text-sacco-blue p-3 rounded-lg font-medium hover:bg-gray-300 transition"
+            >
+              Submit Another Loan
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ⭐ NORMAL FORM ⭐
   return (
     <div className="min-h-screen bg-sacco-bg p-6 flex justify-center">
       <div className="w-full max-w-lg bg-white p-6 rounded-xl shadow-xl border border-sacco-blue/20">
