@@ -54,7 +54,7 @@ export default function LoanStatusPage() {
       );
 
     // Load Verified Stamp
-    const stamp = await fetch("/verified-stamp.png")
+    const stamp = await fetch("/sacco-verified-stamp.png")
       .then((res) => res.blob())
       .then(
         (blob) =>
