@@ -1,5 +1,5 @@
-import { google } from "googleapis";
 import { NextResponse } from "next/server";
+import { google } from "googleapis";
 
 export async function GET(req: Request) {
   try {
@@ -7,14 +7,8 @@ export async function GET(req: Request) {
     const email = searchParams.get("email");
 
     if (!email) {
-      return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing email" }, { status: 400 });
     }
-
-    // ⭐ Trim incoming email
-    const cleanEmail = email.trim().toLowerCase();
 
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -25,75 +19,107 @@ export async function GET(req: Request) {
     });
 
     const sheets = google.sheets({ version: "v4", auth });
+    const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 
-    const sheetId = process.env.GOOGLE_SHEET_ID;
-
-    // Read Approved sheet
-    const approved = await sheets.spreadsheets.values.get({
-      spreadsheetId: sheetId,
-      range: "Log Approved!A:Z",
+    // -------------------------------
+    // 1️⃣ READ Pending Loans (Loan Applicants)
+    // -------------------------------
+    const pendingRes = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: "Loan Applicants!A2:E",
     });
 
-    // Read Declined sheet
-    const declined = await sheets.spreadsheets.values.get({
-      spreadsheetId: sheetId,
-      range: "Log Declined!A:Z",
+    const pendingRows = pendingRes.data.values || [];
+
+    const pendingLoans = pendingRows
+      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
+      .map((r) => ({
+        full_name: r[0],
+        email: r[1],
+        loan_amount: r[2],
+        purpose: r[3],
+        timestamp: r[4],
+        status: "Pending",
+      }));
+
+    // -------------------------------
+    // 2️⃣ READ Approved Loans
+    // -------------------------------
+    const approvedRes = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: "Log Approved!A2:G",
     });
 
-    const approvedRows = approved.data.values || [];
-    const declinedRows = declined.data.values || [];
+    const approvedRows = approvedRes.data.values || [];
 
-    // ⭐ Helper to trim every cell in a row
-    const normalizeRow = (row: string[]) =>
-      row.map((cell) => (cell ? cell.trim() : ""));
+    const approvedLoans = approvedRows
+      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
+      .map((r) => ({
+        full_name: r[0],
+        email: r[1],
+        loan_amount: r[2],
+        purpose: r[3],
+        risk_score: r[4],
+        decision: r[5],
+        timestamp: r[6],
+        status: "Approved",
+      }));
 
-    // ⭐ Normalize all rows (remove whitespace/newlines)
-    const normalizedApproved = approvedRows.map(normalizeRow);
-    const normalizedDeclined = declinedRows.map(normalizeRow);
+    // -------------------------------
+    // 3️⃣ READ Declined Loans
+    // -------------------------------
+    const declinedRes = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: "Log Declined!A2:G",
+    });
 
-    // ⭐ Find match in Approved
-    const approvedMatch = normalizedApproved.find(
-      (row) => row[1]?.toLowerCase() === cleanEmail
-    );
+    const declinedRows = declinedRes.data.values || [];
 
-    if (approvedMatch) {
-      return NextResponse.json({
-        status: "APPROVED",
-        full_name: approvedMatch[0],
-        email: approvedMatch[1],
-        loan_amount: approvedMatch[2],
-        purpose: approvedMatch[3],
-        risk_score: approvedMatch[4],
-        timestamp: approvedMatch[6],
-      });
+    const declinedLoans = declinedRows
+      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
+      .map((r) => ({
+        full_name: r[0],
+        email: r[1],
+        loan_amount: r[2],
+        purpose: r[3],
+        risk_score: r[4],
+        decision: r[5],
+        timestamp: r[6],
+        status: "Declined",
+      }));
+
+    // -------------------------------
+    // 4️⃣ DEDUPLICATE using email + loan_amount + purpose
+    // -------------------------------
+    const combined = [...pendingLoans, ...approvedLoans, ...declinedLoans];
+
+    const uniqueMap = new Map();
+
+    for (const loan of combined) {
+      const key = `${loan.email}-${loan.loan_amount}-${loan.purpose}`;
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, loan);
+      } else {
+        // Replace pending with approved/declined if exists
+        const existing = uniqueMap.get(key);
+        if (existing.status === "Pending" && loan.status !== "Pending") {
+          uniqueMap.set(key, loan);
+        }
+      }
     }
 
-    // ⭐ Find match in Declined
-    const declinedMatch = normalizedDeclined.find(
-      (row) => row[1]?.toLowerCase() === cleanEmail
+    const history = Array.from(uniqueMap.values()).sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
-
-    if (declinedMatch) {
-      return NextResponse.json({
-        status: "DECLINED",
-        full_name: declinedMatch[0],
-        email: declinedMatch[1],
-        loan_amount: declinedMatch[2],
-        purpose: declinedMatch[3],
-        risk_score: declinedMatch[4],
-        guardian_reason: declinedMatch[5],
-        timestamp: declinedMatch[6],
-      });
-    }
 
     return NextResponse.json({
-      status: "NO_APPLICATION",
-      message: "No loan application found for this email.",
+      success: true,
+      history,
     });
   } catch (error: any) {
-    console.error("API Error:", error);
+    console.error("Loan Status Error:", error);
     return NextResponse.json(
-      { error: error.message || "Internal Server Error" },
+      { error: "Failed to load loan status", details: error.message },
       { status: 500 }
     );
   }
