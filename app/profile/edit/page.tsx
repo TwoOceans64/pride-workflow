@@ -16,6 +16,7 @@ export default function EditProfilePage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -92,8 +93,7 @@ export default function EditProfilePage() {
       const data = await res.json();
 
       if (data.success) {
-        alert("Profile updated successfully");
-        router.push("/dashboard");
+        setSuccess(true);
       } else {
         alert("Failed to update profile");
       }
@@ -104,6 +104,45 @@ export default function EditProfilePage() {
       setSaving(false);
     }
   };
+
+  // ⭐ SUCCESS SCREEN ⭐
+  if (success) {
+    return (
+      <div className="min-h-screen bg-sacco-bg p-6 flex justify-center items-center">
+        <div className="bg-white p-8 rounded-xl shadow-xl border border-sacco-blue/20 text-center max-w-md w-full">
+          <div className="flex justify-center mb-4">
+            <div className="h-20 w-20 bg-green-500 text-white rounded-full flex items-center justify-center text-5xl">
+              ✓
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-semibold text-sacco-blue mb-2">
+            Profile Updated Successfully
+          </h2>
+
+          <p className="text-gray-600 mb-6">
+            Your profile information has been saved and updated.
+          </p>
+
+          <div className="space-y-3">
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="w-full bg-sacco-blue text-white p-3 rounded-lg font-medium hover:bg-[#00264d] transition"
+            >
+              Go to Dashboard
+            </button>
+
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full bg-gray-200 text-sacco-blue p-3 rounded-lg font-medium hover:bg-gray-300 transition"
+            >
+              Edit Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -123,7 +162,7 @@ export default function EditProfilePage() {
 
   return (
     <div className="min-h-screen bg-sacco-bg p-6 flex justify-center">
-      <div className="w-full max-w-lg bg-white p-6 rounded-xl shadow-xl border border-sacco-blue/20">
+      <div className="w-full max-w-lg bg-white p-6 rounded-xl shadow-xl border border-sacco-blue/20 text-gray-800">
         <h1 className="text-2xl font-semibold text-sacco-blue mb-4">
           Edit Profile
         </h1>
@@ -171,7 +210,7 @@ export default function EditProfilePage() {
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:border-sacco-blue focus:ring-1 focus:ring-sacco-blue outline-none transition"
+            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition shadow-sm"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
           />
@@ -179,7 +218,7 @@ export default function EditProfilePage() {
           <input
             type="text"
             placeholder="Phone Number"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:border-sacco-blue focus:ring-1 focus:ring-sacco-blue outline-none transition"
+            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition shadow-sm"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
@@ -187,7 +226,7 @@ export default function EditProfilePage() {
           <input
             type="text"
             placeholder="County"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:border-sacco-blue focus:ring-1 focus:ring-sacco-blue outline-none transition"
+            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition shadow-sm"
             value={county}
             onChange={(e) => setCounty(e.target.value)}
           />
@@ -195,7 +234,7 @@ export default function EditProfilePage() {
           <input
             type="password"
             placeholder="Password"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:border-sacco-blue focus:ring-1 focus:ring-sacco-blue outline-none transition"
+            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition shadow-sm"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
