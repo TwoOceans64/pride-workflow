@@ -18,6 +18,10 @@ export default function LoginPage() {
       return;
     }
 
+    // ⭐ SAVE EMAIL FOR DASHBOARD
+    localStorage.setItem("userEmail", email);
+
+    // Redirect to dashboard
     router.push("/dashboard");
   };
 
