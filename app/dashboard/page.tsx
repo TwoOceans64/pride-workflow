@@ -83,7 +83,7 @@ export default function DashboardPage() {
         </button>
 
         <button
-          onClick={() => router.push("/profile")}
+          onClick={() => router.push("/profile/edit")}
           className="px-4 py-2 bg-white border border-sacco-blue text-sacco-blue rounded-lg shadow"
         >
           Profile
