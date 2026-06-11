@@ -11,6 +11,9 @@ export default function DashboardPage() {
   const [recentActivity, setRecentActivity] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // NEW: Welcome Back popup state
+  const [showWelcome, setShowWelcome] = useState(false);
+
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
     setEmail(storedEmail);
@@ -44,6 +47,20 @@ export default function DashboardPage() {
     loadData();
   }, [email]);
 
+  // NEW: Trigger welcome popup AFTER profile loads
+  useEffect(() => {
+    if (!email || !profile?.full_name) return;
+
+    const hasVisited = localStorage.getItem("hasVisitedDashboard");
+
+    if (hasVisited) {
+      setShowWelcome(true);
+    }
+
+    // Mark that the user has now visited at least once
+    localStorage.setItem("hasVisitedDashboard", "true");
+  }, [email, profile]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-sacco-blue text-lg">
@@ -61,7 +78,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sacco-bg p-6">
+    <div className="min-h-screen bg-sacco-bg p-6 relative">
       <h1 className="text-3xl font-semibold text-sacco-blue mb-6">
         Welcome, {profile?.full_name}
       </h1>
@@ -142,6 +159,26 @@ export default function DashboardPage() {
           </ul>
         )}
       </div>
+
+      {/* NEW: Welcome Back Popup */}
+      {showWelcome && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 shadow-xl w-[90%] max-w-sm text-center">
+            <h2 className="text-2xl font-semibold text-sacco-blue mb-2">
+              Welcome back, {profile?.full_name?.split(" ")[0]} 👋
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Good to see you again. Ready to continue your loan applications?
+            </p>
+            <button
+              onClick={() => setShowWelcome(false)}
+              className="px-4 py-2 bg-sacco-blue text-white rounded-lg shadow"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
