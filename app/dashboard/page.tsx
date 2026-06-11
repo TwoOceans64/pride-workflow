@@ -49,18 +49,20 @@ export default function DashboardPage() {
     loadData();
   }, [email]);
 
-  // Trigger welcome popup
+  // ⭐ FIXED POPUP LOGIC — shows immediately on 2nd login and beyond
   useEffect(() => {
-    if (!email || !profile?.full_name) return;
+    if (!email) return;
 
     const hasVisited = localStorage.getItem("hasVisitedDashboard");
 
-    if (hasVisited) {
+    // If user has visited before → show popup immediately
+    if (hasVisited === "true") {
       setShowWelcome(true);
     }
 
+    // Mark visit AFTER checking
     localStorage.setItem("hasVisitedDashboard", "true");
-  }, [email, profile]);
+  }, [email]);
 
   if (loading) {
     return (
