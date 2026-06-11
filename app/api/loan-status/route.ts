@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     // -------------------------------
     const pendingRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Loan Applicants!A2:E",
+      range: "Loan Applicants!A2:F", // ⭐ UPDATED RANGE
     });
 
     const pendingRows = pendingRes.data.values || [];
@@ -39,6 +39,7 @@ export async function GET(req: Request) {
         loan_amount: r[2],
         purpose: r[3],
         timestamp: r[4],
+        reference_number: r[5], // ⭐ NEW
         status: "Pending",
       }));
 
@@ -47,7 +48,7 @@ export async function GET(req: Request) {
     // -------------------------------
     const approvedRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Log Approved!A2:G",
+      range: "Log Approved!A2:H", // ⭐ UPDATED RANGE
     });
 
     const approvedRows = approvedRes.data.values || [];
@@ -62,6 +63,7 @@ export async function GET(req: Request) {
         risk_score: r[4],
         decision: r[5],
         timestamp: r[6],
+        reference_number: r[7], // ⭐ NEW
         status: "Approved",
       }));
 
@@ -70,7 +72,7 @@ export async function GET(req: Request) {
     // -------------------------------
     const declinedRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Log Declined!A2:G",
+      range: "Log Declined!A2:H", // ⭐ UPDATED RANGE
     });
 
     const declinedRows = declinedRes.data.values || [];
@@ -85,6 +87,7 @@ export async function GET(req: Request) {
         risk_score: r[4],
         decision: r[5],
         timestamp: r[6],
+        reference_number: r[7], // ⭐ NEW
         status: "Declined",
       }));
 
@@ -100,7 +103,6 @@ export async function GET(req: Request) {
       if (!uniqueMap.has(key)) {
         uniqueMap.set(key, loan);
       } else {
-        // Replace pending with approved/declined if exists
         const existing = uniqueMap.get(key);
         if (existing.status === "Pending" && loan.status !== "Pending") {
           uniqueMap.set(key, loan);
