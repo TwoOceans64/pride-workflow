@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import jsPDF from "jspdf";
+import QRCode from "qrcode";
 import { useRouter } from "next/navigation";
 
 export default function LoanStatusPage() {
@@ -37,7 +38,7 @@ export default function LoanStatusPage() {
     loadStatus();
   }, [email]);
 
-  // ⭐ UPDATED PDF GENERATOR (Watermark + QR Code)
+  // ⭐ UPDATED PDF GENERATOR (Local QR Code, No External Fetch)
   const downloadPDF = async (loan: any) => {
     const doc = new jsPDF();
 
@@ -77,21 +78,12 @@ export default function LoanStatusPage() {
           })
       );
 
-    // Generate QR Code
-    const qrData = encodeURIComponent(
-      `Reference: ${loan.reference_number}\nName: ${loan.full_name}\nAmount: ${loan.loan_amount}`
-    );
-    const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${qrData}`;
-    const qrCode = await fetch(qrUrl)
-      .then((res) => res.blob())
-      .then(
-        (blob) =>
-          new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          })
-      );
+    // ⭐ Generate QR Code LOCALLY (no fetch)
+    const qrText = `Reference: ${loan.reference_number}
+Name: ${loan.full_name}
+Amount: ${loan.loan_amount}`;
+
+    const qrCode = await QRCode.toDataURL(qrText);
 
     // Add watermark (center)
     doc.addImage(watermark, "PNG", 35, 60, 140, 140, "", "FAST");
