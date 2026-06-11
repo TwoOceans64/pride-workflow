@@ -8,6 +8,9 @@ export default function LoanFormPage() {
   const router = useRouter();
 
   const [fullName, setFullName] = useState("");
+  const [idNumber, setIdNumber] = useState("");
+  const [county, setCounty] = useState("");
+  const [phone, setPhone] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
   const [purpose, setPurpose] = useState("");
   const [email, setEmail] = useState("");
@@ -39,6 +42,9 @@ export default function LoanFormPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           full_name: fullName,
+          id_number: idNumber,
+          county,
+          phone,
           loan_amount: loanAmount,
           purpose,
           email,
@@ -115,6 +121,34 @@ export default function LoanFormPage() {
             className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="ID Number"
+            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
+            value={idNumber}
+            onChange={(e) => setIdNumber(e.target.value)}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="County"
+            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
+            value={county}
+            onChange={(e) => setCounty(e.target.value)}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Phone Number"
+            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
           />
 
           <input
@@ -123,6 +157,7 @@ export default function LoanFormPage() {
             className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
             value={loanAmount}
             onChange={(e) => setLoanAmount(e.target.value)}
+            required
           />
 
           <input
@@ -131,6 +166,7 @@ export default function LoanFormPage() {
             className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
             value={purpose}
             onChange={(e) => setPurpose(e.target.value)}
+            required
           />
 
           <input
@@ -139,6 +175,7 @@ export default function LoanFormPage() {
             className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
 
           <button

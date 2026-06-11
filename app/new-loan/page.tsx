@@ -8,8 +8,10 @@ export default function NewLoanPage() {
 
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
+  const [idNumber, setIdNumber] = useState("");
   const [occupation, setOccupation] = useState("");
   const [county, setCounty] = useState("");
+  const [phone, setPhone] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
   const [purpose, setPurpose] = useState("");
   const [harvestMonth, setHarvestMonth] = useState("");
@@ -29,9 +31,11 @@ export default function NewLoanPage() {
 
     const payload = {
       full_name: fullName,
+      id_number: idNumber,
       email,
       occupation,
       county,
+      phone,
       loan_amount: loanAmount,
       purpose,
       harvest_month: harvestMonth,
@@ -51,11 +55,8 @@ export default function NewLoanPage() {
         throw new Error("Webhook error");
       }
 
-      // Generate reference number
       const ref = "LN-" + Date.now();
       setReference(ref);
-
-      // Show success screen
       setSuccess(true);
     } catch (err) {
       console.error("Loan submission error:", err);
@@ -132,6 +133,21 @@ export default function NewLoanPage() {
             />
           </div>
 
+          {/* ID NUMBER */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              ID Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter your ID number"
+              className="w-full border border-gray-300 p-3 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
+              value={idNumber}
+              onChange={(e) => setIdNumber(e.target.value)}
+              required
+            />
+          </div>
+
           {/* EMAIL */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -171,6 +187,21 @@ export default function NewLoanPage() {
               className="w-full border border-gray-300 p-3 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
               value={county}
               onChange={(e) => setCounty(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* PHONE NUMBER */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter your phone number"
+              className="w-full border border-gray-300 p-3 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-sacco-blue focus:border-sacco-blue transition"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               required
             />
           </div>

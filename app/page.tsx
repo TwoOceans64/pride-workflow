@@ -54,7 +54,7 @@ export default function HomePage() {
           {/* Contact + Login */}
           <div className="flex items-center gap-6">
             <div className="hidden md:flex flex-col text-right text-sm text-gray-600">
-              <span className="font-semibold text-sacco-blue">0700-000-000</span>
+              <span className="font-semibold text-sacco-blue">+27 64 077 5100</span>
               <span>Mon–Sun: 8am – 6pm</span>
             </div>
 
@@ -302,21 +302,21 @@ export default function HomePage() {
               <p className="text-gray-600 italic">
                 “Fast approval and great service. My SACCO really cares.”
               </p>
-              <p className="text-sacco-blue font-semibold mt-3">— Member A</p>
+              <p className="text-sacco-blue font-semibold mt-3">— Temitope Bolugan</p>
             </div>
 
             <div className="p-8 bg-white border rounded-xl shadow-sm">
               <p className="text-gray-600 italic">
                 “The online system is easy to use. I got my loan in minutes.”
               </p>
-              <p className="text-sacco-blue font-semibold mt-3">— Member B</p>
+              <p className="text-sacco-blue font-semibold mt-3">— Grace Doe</p>
             </div>
 
             <div className="p-8 bg-white border rounded-xl shadow-sm">
               <p className="text-gray-600 italic">
                 “Transparent, reliable, and community‑focused. Highly recommended.”
               </p>
-              <p className="text-sacco-blue font-semibold mt-3">— Member C</p>
+              <p className="text-sacco-blue font-semibold mt-3">— Elizabeth Diore</p>
             </div>
           </div>
         </div>
@@ -335,7 +335,7 @@ export default function HomePage() {
 
           <div>
             <h3 className="font-bold text-lg mb-3">Contact</h3>
-            <p className="text-gray-200 text-sm">0700-000-000</p>
+            <p className="text-gray-200 text-sm">+27 64 077 5100</p>
             <p className="text-gray-200 text-sm">Mon–Sun: 8am – 6pm</p>
           </div>
 
