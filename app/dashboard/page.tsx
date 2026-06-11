@@ -11,14 +11,16 @@ export default function DashboardPage() {
   const [recentActivity, setRecentActivity] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // NEW: Welcome Back popup state
+  // Welcome Back popup
   const [showWelcome, setShowWelcome] = useState(false);
 
+  // Load email from localStorage
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
     setEmail(storedEmail);
   }, []);
 
+  // Load dashboard data
   useEffect(() => {
     if (!email) return;
 
@@ -47,7 +49,7 @@ export default function DashboardPage() {
     loadData();
   }, [email]);
 
-  // NEW: Trigger welcome popup AFTER profile loads
+  // Trigger welcome popup
   useEffect(() => {
     if (!email || !profile?.full_name) return;
 
@@ -57,7 +59,6 @@ export default function DashboardPage() {
       setShowWelcome(true);
     }
 
-    // Mark that the user has now visited at least once
     localStorage.setItem("hasVisitedDashboard", "true");
   }, [email, profile]);
 
@@ -160,7 +161,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* NEW: Welcome Back Popup */}
+      {/* Welcome Back Popup */}
       {showWelcome && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 shadow-xl w-[90%] max-w-sm text-center">
