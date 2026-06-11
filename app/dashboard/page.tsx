@@ -81,107 +81,111 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sacco-bg p-6 relative">
-      <h1 className="text-3xl font-semibold text-sacco-blue mb-6">
-        Welcome, {profile?.full_name}
-      </h1>
+    <div className="min-h-screen bg-sacco-bg p-6 relative page-fade">
+      <div className="fade-in">
 
-      {/* Navigation Buttons */}
-      <div className="flex gap-4 mb-6">
-        <button
-          onClick={() => router.push("/new-loan")}
-          className="px-4 py-2 bg-sacco-blue text-white rounded-lg shadow"
-        >
-          New Loan Application
-        </button>
+        <h1 className="text-3xl font-semibold text-sacco-blue mb-6">
+          Welcome, {profile?.full_name}
+        </h1>
 
-        <button
-          onClick={() => router.push("/loan-status")}
-          className="px-4 py-2 bg-white border border-sacco-blue text-sacco-blue rounded-lg shadow"
-        >
-          Loan Status
-        </button>
+        {/* Navigation Buttons */}
+        <div className="flex gap-4 mb-6">
+          <button
+            onClick={() => router.push("/new-loan")}
+            className="px-4 py-2 bg-sacco-blue text-white rounded-lg shadow"
+          >
+            New Loan Application
+          </button>
 
-        <button
-          onClick={() => router.push("/profile/edit")}
-          className="px-4 py-2 bg-white border border-sacco-blue text-sacco-blue rounded-lg shadow"
-        >
-          Profile
-        </button>
+          <button
+            onClick={() => router.push("/loan-status")}
+            className="px-4 py-2 bg-white border border-sacco-blue text-sacco-blue rounded-lg shadow"
+          >
+            Loan Status
+          </button>
 
-        <button
-          onClick={() => {
-            localStorage.removeItem("userEmail");
-            router.push("/login");
-          }}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg shadow"
-        >
-          Logout
-        </button>
-      </div>
+          <button
+            onClick={() => router.push("/profile/edit")}
+            className="px-4 py-2 bg-white border border-sacco-blue text-sacco-blue rounded-lg shadow"
+          >
+            Profile
+          </button>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
-          <p className="text-gray-500 text-sm">Pending Loans</p>
-          <p className="text-2xl font-bold text-sacco-blue">
-            {analytics?.pending}
-          </p>
+          <button
+            onClick={() => {
+              localStorage.removeItem("userEmail");
+              router.push("/login");
+            }}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg shadow"
+          >
+            Logout
+          </button>
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
-          <p className="text-gray-500 text-sm">Approved Loans</p>
-          <p className="text-2xl font-bold text-green-600">
-            {analytics?.approved}
-          </p>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
-          <p className="text-gray-500 text-sm">Declined Loans</p>
-          <p className="text-2xl font-bold text-red-600">
-            {analytics?.declined}
-          </p>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white p-6 rounded-xl shadow border border-sacco-blue/20">
-        <h2 className="text-xl font-semibold text-sacco-blue mb-4">
-          Recent Activity
-        </h2>
-
-        {recentActivity.length === 0 ? (
-          <p className="text-gray-500 text-sm">No recent activity.</p>
-        ) : (
-          <ul className="space-y-2">
-            {recentActivity.map((item, index) => (
-              <li key={index} className="text-gray-700 text-sm">
-                {item}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {/* Welcome Back Popup */}
-      {showWelcome && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 shadow-xl w-[90%] max-w-sm text-center">
-            <h2 className="text-2xl font-semibold text-sacco-blue mb-2">
-              Welcome back, {profile?.full_name?.split(" ")[0]} 👋
-            </h2>
-            <p className="text-gray-600 mb-4">
-              Good to see you again. Ready to continue your loan applications?
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
+            <p className="text-gray-500 text-sm">Pending Loans</p>
+            <p className="text-2xl font-bold text-sacco-blue">
+              {analytics?.pending}
             </p>
-            <button
-              onClick={() => setShowWelcome(false)}
-              className="px-4 py-2 bg-sacco-blue text-white rounded-lg shadow"
-            >
-              Continue
-            </button>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
+            <p className="text-gray-500 text-sm">Approved Loans</p>
+            <p className="text-2xl font-bold text-green-600">
+              {analytics?.approved}
+            </p>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
+            <p className="text-gray-500 text-sm">Declined Loans</p>
+            <p className="text-2xl font-bold text-red-600">
+              {analytics?.declined}
+            </p>
           </div>
         </div>
-      )}
+
+        {/* Recent Activity */}
+        <div className="bg-white p-6 rounded-xl shadow border border-sacco-blue/20">
+          <h2 className="text-xl font-semibold text-sacco-blue mb-4">
+            Recent Activity
+          </h2>
+
+          {recentActivity.length === 0 ? (
+            <p className="text-gray-500 text-sm">No recent activity.</p>
+          ) : (
+            <ul className="space-y-2">
+              {recentActivity.map((item, index) => (
+                <li key={index} className="text-gray-700 text-sm">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Welcome Back Popup */}
+        {showWelcome && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 shadow-xl w-[90%] max-w-sm text-center">
+              <h2 className="text-2xl font-semibold text-sacco-blue mb-2">
+                Welcome back, {profile?.full_name?.split(" ")[0]} 👋
+              </h2>
+              <p className="text-gray-600 mb-4">
+                Good to see you again. Ready to continue your loan applications?
+              </p>
+              <button
+                onClick={() => setShowWelcome(false)}
+                className="px-4 py-2 bg-sacco-blue text-white rounded-lg shadow"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
