@@ -43,7 +43,7 @@ export default function NewLoanPage() {
 
     try {
       const response = await fetch(
-        "https://jmbrowers93.app.n8n.cloud/webhook/sacco-loan-review",
+        "https://mjtechsolutions72.app.n8n.cloud/webhook/sacco-loan-review",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

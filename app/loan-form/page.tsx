@@ -37,7 +37,7 @@ export default function LoanFormPage() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("/api/submit-loan", {
+      const res = await fetch("https://mjtechsolutions72.app.n8n.cloud/webhook/sacco-loan-review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
