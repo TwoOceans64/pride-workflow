@@ -15,7 +15,7 @@ export default function HomePage() {
 
   // ================= CALCULATOR LOGIC =================
   useEffect(() => {
-    const monthlyRate = 0.075; // 7.5% monthly interest
+    const monthlyRate = 0.075;
 
     const installment =
       (amount * monthlyRate) /
@@ -36,13 +36,11 @@ export default function HomePage() {
       <nav className="w-full bg-white shadow-sm border-b border-sacco-blue/20 fixed top-0 left-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
 
-          {/* Logo */}
           <div className="flex items-center gap-2">
             <img src="/sacco-logo.png" alt="SACCO Logo" className="h-10 w-auto" />
             <span className="text-sacco-blue font-bold text-xl">SACCO Smart</span>
           </div>
 
-          {/* Links */}
           <div className="hidden md:flex items-center gap-8 text-sacco-blue font-medium">
             <a href="#advantages" className="hover:text-sacco-gold transition">Our Advantages</a>
             <a href="#how" className="hover:text-sacco-gold transition">How to Borrow</a>
@@ -51,7 +49,6 @@ export default function HomePage() {
             <a href="#reviews" className="hover:text-sacco-gold transition">Reviews</a>
           </div>
 
-          {/* Contact + Login */}
           <div className="flex items-center gap-6">
             <div className="hidden md:flex flex-col text-right text-sm text-gray-600">
               <span className="font-semibold text-sacco-blue">+27 64 077 5100</span>
@@ -70,73 +67,56 @@ export default function HomePage() {
 
       {/* ================= HERO SECTION ================= */}
       <section
+        id="hero"
         className="min-h-screen bg-sacco-bg bg-cover bg-center flex items-center"
         style={{ paddingTop: "80px" }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center md:items-start">
+        <div className="max-w-7xl mx-auto px-6 py-20">
+          <h1 className="text-5xl md:text-6xl font-bold text-sacco-blue leading-tight">
+            Fast, Simple & Secure Loans<br />
+            <span className="text-sacco-gold">Designed for You</span>
+          </h1>
 
-          {/* Left-aligned text */}
-          <div className="md:w-1/2 text-left bg-white/80 p-8 rounded-xl shadow-lg border border-sacco-blue/20">
-            <h1 className="text-4xl md:text-5xl font-bold text-sacco-blue leading-tight">
-              SACCO Smart Systems
-            </h1>
+          <p className="mt-6 text-lg text-gray-700 max-w-2xl">
+            SACCO Smart helps you access affordable loans with transparent fees,
+            flexible repayment options, and instant approval.
+          </p>
 
-            <p className="text-gray-700 text-lg mt-4">
-              Your digital loan application and member services portal.
-              Fast, secure, and community‑driven.
-            </p>
-
-            {/* Buttons */}
-            <div className="mt-8 space-y-4">
-              <button
-                onClick={() => router.push("/login")}
-                className="bg-sacco-blue text-white px-6 py-3 rounded-lg font-medium 
-                           hover:bg-[#00264d] transition shadow-sm w-full md:w-auto"
-              >
-                Continue to Sign In
-              </button>
-
-              <button
-                onClick={() => router.push("/signup")}
-                className="bg-sacco-gold text-sacco-blue px-6 py-3 rounded-lg font-medium 
-                           hover:bg-[#e0a200] transition shadow-sm w-full md:w-auto"
-              >
-                Create a New Account
-              </button>
-            </div>
-
-            <p className="text-sm text-gray-600 mt-6">
-              Powered by <span className="font-semibold text-sacco-gold">Michaela J Browers</span>
-            </p>
-          </div>
-
+          <button
+            onClick={() => router.push("/apply")}
+            className="mt-8 bg-sacco-blue text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#00264d] transition"
+          >
+            Apply Now
+          </button>
         </div>
       </section>
 
-      {/* ================= OUR ADVANTAGES ================= */}
-      <section id="advantages" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-sacco-blue mb-12">Our Advantages</h2>
+      {/* ================= ADVANTAGES SECTION ================= */}
+      <section id="advantages" className="py-24 bg-sacco-green/10">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-sacco-blue mb-12">
+            Why Choose SACCO Smart?
+          </h2>
 
-          <div className="grid md:grid-cols-3 gap-10">
-            <div className="p-8 border rounded-xl shadow-sm hover:shadow-md transition">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">Profitable</h3>
-              <p className="text-gray-600">
-                Low interest rates designed to benefit SACCO members first.
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-green">
+              <h3 className="text-xl font-semibold text-sacco-blue">Low Interest Rates</h3>
+              <p className="mt-3 text-gray-700">
+                Our loan rates are designed to be affordable and transparent.
               </p>
             </div>
 
-            <div className="p-8 border rounded-xl shadow-sm hover:shadow-md transition">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">Reliable</h3>
-              <p className="text-gray-600">
-                Regulated, transparent, and built on trusted SACCO principles.
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-green">
+              <h3 className="text-xl font-semibold text-sacco-blue">Fast Approval</h3>
+              <p className="mt-3 text-gray-700">
+                Get approved within minutes with our automated system.
               </p>
             </div>
 
-            <div className="p-8 border rounded-xl shadow-sm hover:shadow-md transition">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">Simple</h3>
-              <p className="text-gray-600">
-                Apply anywhere, anytime — fast approvals and instant disbursement.
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-green">
+              <h3 className="text-xl font-semibold text-sacco-blue">Flexible Repayments</h3>
+              <p className="mt-3 text-gray-700">
+                Choose repayment terms that fit your financial situation.
               </p>
             </div>
           </div>
@@ -144,213 +124,199 @@ export default function HomePage() {
       </section>
 
       {/* ================= HOW TO BORROW ================= */}
-      <section id="how" className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-sacco-blue mb-12">How to Borrow</h2>
+      <section id="how" className="py-24 bg-sacco-blue/10">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-sacco-blue mb-12">
+            How to Borrow
+          </h2>
 
-          <div className="grid md:grid-cols-3 gap-10">
-            <div className="p-8 bg-white border rounded-xl shadow-sm">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">1. Apply Online</h3>
-              <p className="text-gray-600">Fill out your loan application in minutes.</p>
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-blue">
+              <h3 className="text-xl font-semibold text-sacco-blue">1. Apply Online</h3>
+              <p className="mt-3 text-gray-700">
+                Fill in your details and submit your loan request.
+              </p>
             </div>
 
-            <div className="p-8 bg-white border rounded-xl shadow-sm">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">2. Wait for Approval</h3>
-              <p className="text-gray-600">Our system processes your request quickly.</p>
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-blue">
+              <h3 className="text-xl font-semibold text-sacco-blue">2. Get Approved</h3>
+              <p className="mt-3 text-gray-700">
+                Our system reviews your application instantly.
+              </p>
             </div>
 
-            <div className="p-8 bg-white border rounded-xl shadow-sm">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">3. Receive Money</h3>
-              <p className="text-gray-600">Funds are sent directly to your account.</p>
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-blue">
+              <h3 className="text-xl font-semibold text-sacco-blue">3. Receive Funds</h3>
+              <p className="mt-3 text-gray-700">
+                Money is sent directly to your bank account.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-blue">
+              <h3 className="text-xl font-semibold text-sacco-blue">4. Repay Monthly</h3>
+              <p className="mt-3 text-gray-700">
+                Make easy monthly repayments through debit order.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ================= ADVANCED LOAN CALCULATOR ================= */}
-      <section id="calculator" className="py-20 bg-white">
+      {/* ================= LOAN CALCULATOR ================= */}
+      <section id="calculator" className="py-24 bg-sacco-gold/10">
         <div className="max-w-7xl mx-auto px-6">
-
-          <h2 className="text-3xl font-bold text-sacco-blue text-center mb-12">
+          <h2 className="text-4xl font-bold text-sacco-blue mb-12">
             Loan Calculator
           </h2>
 
-          <div className="bg-gray-50 p-10 rounded-2xl shadow-md border border-sacco-blue/20 max-w-3xl mx-auto">
-
-            {/* Loan Amount */}
-            <div className="mb-10">
-              <label className="text-sacco-blue font-semibold text-lg">
-                Loan Amount (KES)
-              </label>
-
+          <div className="grid md:grid-cols-2 gap-12">
+            <div className="bg-white p-8 rounded-xl shadow-md">
+              <label className="block font-semibold text-sacco-blue">Loan Amount</label>
               <input
                 type="range"
                 min="1000"
-                max="200000"
+                max="50000"
                 value={amount}
-                className="w-full mt-3"
                 onChange={(e) => setAmount(Number(e.target.value))}
+                className="w-full mt-3"
               />
+              <p className="mt-2 text-gray-700">R {amount}</p>
 
-              <p className="text-gray-700 mt-2">
-                Selected Amount:{" "}
-                <span className="font-bold text-sacco-blue">
-                  {amount.toLocaleString()}
-                </span>{" "}
-                KES
-              </p>
-            </div>
-
-            {/* Repayment Period */}
-            <div className="mb-10">
-              <label className="text-sacco-blue font-semibold text-lg">
-                Repayment Period (Months)
-              </label>
-
+              <label className="block mt-6 font-semibold text-sacco-blue">Repayment Months</label>
               <input
                 type="range"
                 min="1"
-                max="12"
+                max="24"
                 value={months}
-                className="w-full mt-3"
                 onChange={(e) => setMonths(Number(e.target.value))}
+                className="w-full mt-3"
               />
+              <p className="mt-2 text-gray-700">{months} months</p>
+            </div>
 
-              <p className="text-gray-700 mt-2">
-                Repayment Period:{" "}
-                <span className="font-bold text-sacco-blue">
-                  {months}
-                </span>{" "}
-                months
+            <div className="bg-white p-8 rounded-xl shadow-md">
+              <h3 className="text-2xl font-bold text-sacco-blue mb-6">Your Loan Summary</h3>
+
+              <p className="text-lg text-gray-700">
+                Monthly Installment:
+                <span className="font-bold text-sacco-blue ml-2">
+                  R {monthlyInstallment}
+                </span>
+              </p>
+
+              <p className="text-lg text-gray-700 mt-4">
+                Total Interest:
+                <span className="font-bold text-sacco-blue ml-2">
+                  R {totalInterest}
+                </span>
+              </p>
+
+              <p className="text-lg text-gray-700 mt-4">
+                Total Repayment:
+                <span className="font-bold text-sacco-blue ml-2">
+                  R {totalRepayment}
+                </span>
               </p>
             </div>
-
-            {/* Breakdown */}
-            <div className="grid md:grid-cols-3 gap-6 mt-10 text-center">
-
-              <div className="p-6 bg-white rounded-xl border shadow-sm">
-                <p className="text-gray-600 text-sm">Monthly Installment</p>
-                <p className="text-xl font-bold text-sacco-blue mt-2">
-                  KES {monthlyInstallment.toLocaleString()}
-                </p>
-              </div>
-
-              <div className="p-6 bg-white rounded-xl border shadow-sm">
-                <p className="text-gray-600 text-sm">Total Interest</p>
-                <p className="text-xl font-bold text-sacco-blue mt-2">
-                  KES {totalInterest.toLocaleString()}
-                </p>
-              </div>
-
-              <div className="p-6 bg-white rounded-xl border shadow-sm">
-                <p className="text-gray-600 text-sm">Total Repayment</p>
-                <p className="text-xl font-bold text-sacco-gold mt-2">
-                  KES {totalRepayment.toLocaleString()}
-                </p>
-              </div>
-
-            </div>
-
-            {/* Apply Button */}
-            <div className="text-center mt-12">
-              <button
-                onClick={() => router.push("/login")}
-                className="bg-sacco-blue text-white px-8 py-3 rounded-lg font-medium 
-                           hover:bg-[#00264d] transition shadow-sm"
-              >
-                Apply for a Loan
-              </button>
-            </div>
-
           </div>
         </div>
       </section>
 
-      {/* ================= SERVICES ================= */}
-      <section id="services" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-sacco-blue mb-12">Loan Services</h2>
+      {/* ================= LOAN SERVICES ================= */}
+      <section id="services" className="py-24 bg-sacco-gold/10">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-sacco-blue mb-12">
+            Loan Services
+          </h2>
 
-          <div className="grid md:grid-cols-3 gap-10">
-
-            <div className="p-8 border rounded-xl shadow-sm hover:shadow-md transition">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">Personal Loans</h3>
-              <p className="text-gray-600">Flexible loans for everyday needs.</p>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-gold">
+              <h3 className="text-xl font-semibold text-sacco-blue">Personal Loans</h3>
+              <p className="mt-3 text-gray-700">
+                Flexible loans for emergencies, bills, or personal needs.
+              </p>
             </div>
 
-            <div className="p-8 border rounded-xl shadow-sm hover:shadow-md transition">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">Emergency Loans</h3>
-              <p className="text-gray-600">Fast access to funds when you need them most.</p>
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-gold">
+              <h3 className="text-xl font-semibold text-sacco-blue">Business Loans</h3>
+              <p className="mt-3 text-gray-700">
+                Funding to help your business grow and succeed.
+              </p>
             </div>
 
-            <div className="p-8 border rounded-xl shadow-sm hover:shadow-md transition">
-              <h3 className="text-xl font-semibold text-sacco-blue mb-3">Education Loans</h3>
-              <p className="text-gray-600">Support for school, college, and training.</p>
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-gold">
+              <h3 className="text-xl font-semibold text-sacco-blue">Short‑Term Loans</h3>
+              <p className="mt-3 text-gray-700">
+                Quick loans with fast approval and easy repayment.
+              </p>
             </div>
-
           </div>
         </div>
       </section>
+      {/* ================= REVIEWS SECTION ================= */}
+      <section id="reviews" className="py-24 bg-sacco-beige/20">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-sacco-blue mb-12">
+            What Our Members Say
+          </h2>
 
-      {/* ================= REVIEWS ================= */}
-      <section id="reviews" className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-sacco-blue mb-12">What Our Members Say</h2>
-
-          <div className="grid md:grid-cols-3 gap-10">
-            <div className="p-8 bg-white border rounded-xl shadow-sm">
-              <p className="text-gray-600 italic">
-                “Fast approval and great service. My SACCO really cares.”
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-beige">
+              <p className="text-gray-700 italic">
+                “SACCO Smart helped me get a loan within minutes. The process was smooth and stress‑free.”
               </p>
-              <p className="text-sacco-blue font-semibold mt-3">— Temitope Bolugan</p>
+              <p className="mt-4 font-semibold text-sacco-blue">— Thabo M.</p>
             </div>
 
-            <div className="p-8 bg-white border rounded-xl shadow-sm">
-              <p className="text-gray-600 italic">
-                “The online system is easy to use. I got my loan in minutes.”
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-beige">
+              <p className="text-gray-700 italic">
+                “Their interest rates are much lower than other lenders. Highly recommended.”
               </p>
-              <p className="text-sacco-blue font-semibold mt-3">— Grace Doe</p>
+              <p className="mt-4 font-semibold text-sacco-blue">— Lerato K.</p>
             </div>
 
-            <div className="p-8 bg-white border rounded-xl shadow-sm">
-              <p className="text-gray-600 italic">
-                “Transparent, reliable, and community‑focused. Highly recommended.”
+            <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-sacco-beige">
+              <p className="text-gray-700 italic">
+                “I love how transparent and simple everything is. No hidden fees.”
               </p>
-              <p className="text-sacco-blue font-semibold mt-3">— Elizabeth Diore</p>
+              <p className="mt-4 font-semibold text-sacco-blue">— Sipho D.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* ================= FOOTER ================= */}
-      <footer className="bg-sacco-blue text-white py-10 mt-20">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-10">
+      <footer className="bg-sacco-blue text-white py-12 mt-24">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12">
 
           <div>
-            <h3 className="font-bold text-lg mb-3">SACCO Smart Systems</h3>
-            <p className="text-gray-200 text-sm">
-              Empowering members with fast, secure, and transparent digital loan services.
+            <h3 className="text-xl font-bold">SACCO Smart</h3>
+            <p className="mt-3 text-sacco-beige/90">
+              Affordable, transparent and secure loans designed for South Africans.
             </p>
           </div>
 
           <div>
-            <h3 className="font-bold text-lg mb-3">Contact</h3>
-            <p className="text-gray-200 text-sm">+27 64 077 5100</p>
-            <p className="text-gray-200 text-sm">Mon–Sun: 8am – 6pm</p>
+            <h3 className="text-xl font-bold">Quick Links</h3>
+            <ul className="mt-3 space-y-2 text-sacco-beige/90">
+              <li><a href="#advantages" className="hover:text-white transition">Our Advantages</a></li>
+              <li><a href="#how" className="hover:text-white transition">How to Borrow</a></li>
+              <li><a href="#calculator" className="hover:text-white transition">Loan Calculator</a></li>
+              <li><a href="#services" className="hover:text-white transition">Loan Services</a></li>
+            </ul>
           </div>
 
           <div>
-            <h3 className="font-bold text-lg mb-3">Legal</h3>
-            <p className="text-gray-200 text-sm">Privacy Policy</p>
-            <p className="text-gray-200 text-sm">Terms & Conditions</p>
-            <p className="text-gray-200 text-sm">SACCO Registration No. 000000</p>
+            <h3 className="text-xl font-bold">Contact Us</h3>
+            <p className="mt-3 text-sacco-beige/90">Phone: +27 64 077 5100</p>
+            <p className="text-sacco-beige/90">Email: support@saccosmart.co.za</p>
           </div>
 
         </div>
 
-        <p className="text-center text-gray-300 text-sm mt-10">
-          © {new Date().getFullYear()} SACCO Smart Systems. All Rights Reserved.
-        </p>
+        <div className="text-center text-sacco-beige/70 mt-12 text-sm">
+          © {new Date().getFullYear()} SACCO Smart. All rights reserved.
+        </div>
       </footer>
 
     </div>
