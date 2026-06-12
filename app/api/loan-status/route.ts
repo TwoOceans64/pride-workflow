@@ -10,7 +10,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing email" }, { status: 400 });
     }
 
-    // ⭐ Normalize incoming email
     const cleanEmail = email.trim().toLowerCase();
 
     // Google Auth
@@ -24,18 +23,17 @@ export async function GET(req: Request) {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    // Helper to sanitize sheet values
     const clean = (value: any) =>
       (value || "")
         .toString()
-        .replace(/(\r\n|\n|\r)/gm, "") // remove ALL newline types
+        .replace(/(\r\n|\n|\r)/gm, "")
         .trim();
 
     // Read all three logs
     const ranges = [
-      "Loan Applicants!A2:F",
-      "Log Approved!A2:I",
-      "Log Declined!A2:I",
+      "Loan Applicants!A2:F", // Pending
+      "Log Approved!A2:I",    // Approved
+      "Log Declined!A2:I",    // Declined
     ];
 
     const responses = await Promise.all(
@@ -51,27 +49,55 @@ export async function GET(req: Request) {
       (res) => res.data.values || []
     );
 
-    const normalizeRow = (r: any[], decision: string) => ({
+    // -------------------------------
+    // NORMALIZE PENDING ROWS
+    // -------------------------------
+    const pending = pendingRows.map((r) => ({
+      full_name: clean(r[0]),
+      email: clean(r[1]),
+      loan_amount: clean(r[2]),
+      purpose: clean(r[3]),
+      risk_score: "", // pending has no risk score
+      decision: "PENDING",
+      timestamp: clean(r[4]), // pending timestamp is column E
+      reference_number: clean(r[5] || ""), // optional
+      id_number: "",
+    }));
+
+    // -------------------------------
+    // NORMALIZE APPROVED ROWS
+    // -------------------------------
+    const approved = approvedRows.map((r) => ({
       full_name: clean(r[0]),
       email: clean(r[1]),
       loan_amount: clean(r[2]),
       purpose: clean(r[3]),
       risk_score: clean(r[4]),
-      decision,
+      decision: clean(r[5]),
       timestamp: clean(r[6]),
       reference_number: clean(r[7]),
       id_number: clean(r[8]),
-    });
+    }));
 
-    // Normalize all rows
-    const pending = pendingRows.map((r) => normalizeRow(r, "PENDING"));
-    const approved = approvedRows.map((r) => normalizeRow(r, "APPROVED"));
-    const declined = declinedRows.map((r) => normalizeRow(r, "DECLINED"));
+    // -------------------------------
+    // NORMALIZE DECLINED ROWS
+    // -------------------------------
+    const declined = declinedRows.map((r) => ({
+      full_name: clean(r[0]),
+      email: clean(r[1]),
+      loan_amount: clean(r[2]),
+      purpose: clean(r[3]),
+      risk_score: clean(r[4]),
+      decision: clean(r[5]),
+      timestamp: clean(r[6]),
+      reference_number: clean(r[7]),
+      id_number: clean(r[8]),
+    }));
 
     // Combine all
     const all = [...pending, ...approved, ...declined];
 
-    // ⭐ Filter by sanitized email
+    // Filter by sanitized email
     const history = all.filter(
       (row) => row.email.toLowerCase() === cleanEmail
     );

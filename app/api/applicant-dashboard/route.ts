@@ -38,7 +38,7 @@ export async function GET(req: Request) {
         loan_amount: r[2],
         purpose: r[3],
         timestamp: r[4],
-        decision: "Pending",
+        decision: "PENDING",
       }));
 
     // -------------------------------
@@ -52,15 +52,16 @@ export async function GET(req: Request) {
     const approvedRows = approvedRes.data.values || [];
 
     const approvedLoans = approvedRows
-      .filter((r) => r[2]?.toLowerCase() === email.toLowerCase())
+      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
       .map((r) => ({
-        email: r[2],
-        loan_amount: r[3],
-        purpose: r[4],
-        risk_score: r[5],
-        decision: r[6], // "Approved"
-        timestamp: r[7],
-        reference_number: r[8],
+        email: r[1],            // B
+        loan_amount: r[2],      // C
+        purpose: r[3],          // D
+        risk_score: r[4],       // E
+        decision: r[5],         // F
+        timestamp: r[6],        // G
+        reference_number: r[7], // H
+        id_number: r[8],        // I
       }));
 
     // -------------------------------
@@ -74,15 +75,16 @@ export async function GET(req: Request) {
     const declinedRows = declinedRes.data.values || [];
 
     const declinedLoans = declinedRows
-      .filter((r) => r[2]?.toLowerCase() === email.toLowerCase())
+      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
       .map((r) => ({
-        email: r[2],
-        loan_amount: r[3],
-        purpose: r[4],
-        risk_score: r[5],
-        decision: r[6], // "Declined"
-        timestamp: r[7],
-        reference_number: r[8],
+        email: r[1],            // B
+        loan_amount: r[2],      // C
+        purpose: r[3],          // D
+        risk_score: r[4],       // E
+        decision: r[5],         // F
+        timestamp: r[6],        // G
+        reference_number: r[7], // H
+        id_number: r[8],        // I
       }));
 
     // -------------------------------
@@ -101,8 +103,8 @@ export async function GET(req: Request) {
 
         // Replace pending with approved/declined
         if (
-          existing.decision === "Pending" &&
-          loan.decision !== "Pending"
+          existing.decision === "PENDING" &&
+          loan.decision !== "PENDING"
         ) {
           uniqueMap.set(key, loan);
         }
@@ -117,13 +119,13 @@ export async function GET(req: Request) {
     const analytics = {
       totalLoans: finalLoans.length,
       pending: finalLoans.filter(
-        (l) => l.decision?.toLowerCase() === "pending"
+        (l) => l.decision?.toUpperCase() === "PENDING"
       ).length,
       approved: finalLoans.filter(
-        (l) => l.decision?.toLowerCase() === "approved"
+        (l) => l.decision?.toUpperCase() === "APPROVED"
       ).length,
       declined: finalLoans.filter(
-        (l) => l.decision?.toLowerCase() === "declined"
+        (l) => l.decision?.toUpperCase() === "DECLINED"
       ).length,
     };
 

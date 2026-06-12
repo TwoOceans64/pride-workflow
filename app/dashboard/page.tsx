@@ -7,7 +7,11 @@ export default function DashboardPage() {
   const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [analytics, setAnalytics] = useState<any>(null);
+  const [analytics, setAnalytics] = useState<any>({
+    pending: 0,
+    approved: 0,
+    declined: 0,
+  });
   const [recentActivity, setRecentActivity] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,13 +35,24 @@ export default function DashboardPage() {
         const profileData = await profileRes.json();
         if (profileData.success) setProfile(profileData.profile);
 
-        // Load analytics
-        const dashRes = await fetch(`/api/applicant-dashboard?email=${email}`);
-        const dashData = await dashRes.json();
+        // Load loan history (correct API)
+        const loanRes = await fetch(`/api/loan-status?email=${email}`);
+        const loanData = await loanRes.json();
 
-        if (dashData.success) {
-          setAnalytics(dashData.analytics);
-          setRecentActivity(dashData.recentActivity);
+        if (loanData.success) {
+          const history = loanData.history || [];
+
+          // Compute analytics
+          setAnalytics({
+            pending: history.filter((l: any) => l.decision === "PENDING").length,
+            approved: history.filter((l: any) => l.decision === "APPROVED").length,
+            declined: history.filter((l: any) => l.decision === "DECLINED").length,
+          });
+
+          // Recent activity list
+          setRecentActivity(
+            history.map((l: any) => `${l.purpose} – ${l.decision}`)
+          );
         }
       } catch (err) {
         console.error("Dashboard load error:", err);
@@ -49,18 +64,16 @@ export default function DashboardPage() {
     loadData();
   }, [email]);
 
-  // ⭐ FIXED POPUP LOGIC — shows immediately on 2nd login and beyond
+  // Welcome popup logic
   useEffect(() => {
     if (!email) return;
 
     const hasVisited = localStorage.getItem("hasVisitedDashboard");
 
-    // If user has visited before → show popup immediately
     if (hasVisited === "true") {
       setShowWelcome(true);
     }
 
-    // Mark visit AFTER checking
     localStorage.setItem("hasVisitedDashboard", "true");
   }, [email]);
 
@@ -127,21 +140,21 @@ export default function DashboardPage() {
           <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
             <p className="text-gray-500 text-sm">Pending Loans</p>
             <p className="text-2xl font-bold text-sacco-blue">
-              {analytics?.pending}
+              {analytics.pending}
             </p>
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
             <p className="text-gray-500 text-sm">Approved Loans</p>
             <p className="text-2xl font-bold text-green-600">
-              {analytics?.approved}
+              {analytics.approved}
             </p>
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow border border-sacco-blue/20">
             <p className="text-gray-500 text-sm">Declined Loans</p>
             <p className="text-2xl font-bold text-red-600">
-              {analytics?.declined}
+              {analytics.declined}
             </p>
           </div>
         </div>
