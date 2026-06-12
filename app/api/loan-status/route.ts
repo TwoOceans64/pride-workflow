@@ -10,6 +10,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing email" }, { status: 400 });
     }
 
+    // ⭐ Normalize incoming email
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Google Auth
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -19,113 +23,64 @@ export async function GET(req: Request) {
     });
 
     const sheets = google.sheets({ version: "v4", auth });
-    const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 
-    // -------------------------------
-    // 1️⃣ READ Pending Loans (Loan Applicants)
-    // -------------------------------
-    const pendingRes = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: "Loan Applicants!A2:F",
-    });
+    // Helper to sanitize sheet values
+    const clean = (value: any) =>
+      (value || "")
+        .toString()
+        .replace(/(\r\n|\n|\r)/gm, "") // remove ALL newline types
+        .trim();
 
-    const pendingRows = pendingRes.data.values || [];
+    // Read all three logs
+    const ranges = [
+      "Loan Applicants!A2:F",
+      "Log Approved!A2:I",
+      "Log Declined!A2:I",
+    ];
 
-    const pendingLoans = pendingRows
-      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
-      .map((r) => ({
-        full_name: r[0],       // A
-        email: r[1],           // B
-        loan_amount: r[2],     // C
-        purpose: r[3],         // D
-        timestamp: r[4],       // E
-        reference_number: r[5],// F
-        decision: "Pending",
-      }));
-
-    // -------------------------------
-    // 2️⃣ READ Approved Loans (A:I)
-    // -------------------------------
-    const approvedRes = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: "Log Approved!A2:I",
-    });
-
-    const approvedRows = approvedRes.data.values || [];
-
-    const approvedLoans = approvedRows
-      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase()) // email is column B
-      .map((r) => ({
-        full_name: r[0],          // A
-        email: r[1],              // B
-        loan_amount: r[2],        // C
-        purpose: r[3],            // D
-        risk_score: r[4],         // E
-        decision: r[5],           // F
-        timestamp: r[6],          // G
-        reference_number: r[7],   // H
-        id_number: r[8],          // I
-      }));
-
-    // -------------------------------
-    // 3️⃣ READ Declined Loans (A:I)
-    // -------------------------------
-    const declinedRes = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: "Log Declined!A2:I",
-    });
-
-    const declinedRows = declinedRes.data.values || [];
-
-    const declinedLoans = declinedRows
-      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase()) // email is column B
-      .map((r) => ({
-        full_name: r[0],          // A
-        email: r[1],              // B
-        loan_amount: r[2],        // C
-        purpose: r[3],            // D
-        risk_score: r[4],         // E
-        decision: r[5],           // F
-        timestamp: r[6],          // G
-        reference_number: r[7],   // H
-        id_number: r[8],          // I
-      }));
-
-    // -------------------------------
-    // 4️⃣ COMBINE + DEDUPLICATE
-    // -------------------------------
-    const combined = [...pendingLoans, ...approvedLoans, ...declinedLoans];
-
-    const uniqueMap = new Map<string, any>();
-
-    for (const loan of combined) {
-      const key = `${loan.email}-${loan.loan_amount}-${loan.purpose}`;
-      if (!uniqueMap.has(key)) {
-        uniqueMap.set(key, loan);
-      } else {
-        const existing = uniqueMap.get(key);
-
-        if (
-          existing.decision === "Pending" &&
-          loan.decision !== "Pending"
-        ) {
-          uniqueMap.set(key, loan);
-        }
-      }
-    }
-
-    const history = Array.from(uniqueMap.values()).sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    const responses = await Promise.all(
+      ranges.map((range) =>
+        sheets.spreadsheets.values.get({
+          spreadsheetId: process.env.GOOGLE_SHEET_ID,
+          range,
+        })
+      )
     );
 
-    return NextResponse.json({
-      success: true,
-      history,
+    const [pendingRows, approvedRows, declinedRows] = responses.map(
+      (res) => res.data.values || []
+    );
+
+    const normalizeRow = (r: any[], decision: string) => ({
+      full_name: clean(r[0]),
+      email: clean(r[1]),
+      loan_amount: clean(r[2]),
+      purpose: clean(r[3]),
+      risk_score: clean(r[4]),
+      decision,
+      timestamp: clean(r[6]),
+      reference_number: clean(r[7]),
+      id_number: clean(r[8]),
     });
-  } catch (error: any) {
-    console.error("Loan Status Error:", error);
+
+    // Normalize all rows
+    const pending = pendingRows.map((r) => normalizeRow(r, "PENDING"));
+    const approved = approvedRows.map((r) => normalizeRow(r, "APPROVED"));
+    const declined = declinedRows.map((r) => normalizeRow(r, "DECLINED"));
+
+    // Combine all
+    const all = [...pending, ...approved, ...declined];
+
+    // ⭐ Filter by sanitized email
+    const history = all.filter(
+      (row) => row.email.toLowerCase() === cleanEmail
+    );
+
+    return NextResponse.json({ success: true, history });
+  } catch (err) {
+    console.error("Loan status API error:", err);
     return NextResponse.json(
-      { error: "Failed to load loan status", details: error.message },
+      { error: "Failed to load loan status" },
       { status: 500 }
     );
   }
