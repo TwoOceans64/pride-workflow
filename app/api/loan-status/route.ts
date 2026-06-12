@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     // -------------------------------
     const pendingRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Loan Applicants!A2:F", // ⭐ UPDATED RANGE
+      range: "Loan Applicants!A2:F",
     });
 
     const pendingRows = pendingRes.data.values || [];
@@ -39,8 +39,8 @@ export async function GET(req: Request) {
         loan_amount: r[2],
         purpose: r[3],
         timestamp: r[4],
-        reference_number: r[5], // ⭐ NEW
-        status: "Pending",
+        reference_number: r[5],
+        decision: "Pending",
       }));
 
     // -------------------------------
@@ -48,23 +48,23 @@ export async function GET(req: Request) {
     // -------------------------------
     const approvedRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Log Approved!A2:H", // ⭐ UPDATED RANGE
+      range: "Log Approved!A2:I",
     });
 
     const approvedRows = approvedRes.data.values || [];
 
     const approvedLoans = approvedRows
-      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
+      .filter((r) => r[2]?.toLowerCase() === email.toLowerCase()) // email is column C
       .map((r) => ({
         full_name: r[0],
-        email: r[1],
-        loan_amount: r[2],
-        purpose: r[3],
-        risk_score: r[4],
-        decision: r[5],
-        timestamp: r[6],
-        reference_number: r[7], // ⭐ NEW
-        status: "Approved",
+        id_number: r[1],
+        email: r[2],
+        loan_amount: r[3],
+        purpose: r[4],
+        risk_score: r[5],
+        decision: r[6], // "Approved"
+        timestamp: r[7],
+        reference_number: r[8],
       }));
 
     // -------------------------------
@@ -72,27 +72,27 @@ export async function GET(req: Request) {
     // -------------------------------
     const declinedRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Log Declined!A2:H", // ⭐ UPDATED RANGE
+      range: "Log Declined!A2:I",
     });
 
     const declinedRows = declinedRes.data.values || [];
 
     const declinedLoans = declinedRows
-      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
+      .filter((r) => r[2]?.toLowerCase() === email.toLowerCase()) // email is column C
       .map((r) => ({
         full_name: r[0],
-        email: r[1],
-        loan_amount: r[2],
-        purpose: r[3],
-        risk_score: r[4],
-        decision: r[5],
-        timestamp: r[6],
-        reference_number: r[7], // ⭐ NEW
-        status: "Declined",
+        id_number: r[1],
+        email: r[2],
+        loan_amount: r[3],
+        purpose: r[4],
+        risk_score: r[5],
+        decision: r[6], // "Declined"
+        timestamp: r[7],
+        reference_number: r[8],
       }));
 
     // -------------------------------
-    // 4️⃣ DEDUPLICATE using email + loan_amount + purpose
+    // 4️⃣ COMBINE + DEDUPLICATE
     // -------------------------------
     const combined = [...pendingLoans, ...approvedLoans, ...declinedLoans];
 
@@ -104,7 +104,12 @@ export async function GET(req: Request) {
         uniqueMap.set(key, loan);
       } else {
         const existing = uniqueMap.get(key);
-        if (existing.status === "Pending" && loan.status !== "Pending") {
+
+        // Replace pending with approved/declined
+        if (
+          existing.decision === "Pending" &&
+          loan.decision !== "Pending"
+        ) {
           uniqueMap.set(key, loan);
         }
       }
