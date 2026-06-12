@@ -5,10 +5,7 @@ import QRCode from "qrcode";
 
 export default function PDFButton({ loan }: { loan: any }) {
   const downloadPDF = async () => {
-    const doc = new jsPDF({
-      unit: "mm",
-      format: "a4",
-    });
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
 
     // ================= LOAD IMAGES =================
     const loadImage = async (path: string) => {
@@ -56,7 +53,7 @@ Decision: ${loan.decision}
 
         // Reapply watermarks on new page
         doc.addImage(watermarkPremium, "PNG", 25, 120, 160, 160);
-        doc.addImage(watermarkSeal, "PNG", 70, 140, 70, 70);
+        doc.addImage(watermarkSeal, "PNG", 80, 20, 50, 50); // top-middle placement
       }
     };
 
@@ -108,7 +105,7 @@ Decision: ${loan.decision}
 
     // ================= DUAL WATERMARKS =================
     doc.addImage(watermarkPremium, "PNG", 25, 120, 160, 160);
-    doc.addImage(watermarkSeal, "PNG", 70, 140, 70, 70);
+    doc.addImage(watermarkSeal, "PNG", 80, 20, 50, 50); // top-middle transparent seal
 
     // ================= LOAN DETAILS =================
     doc.setFontSize(12);
@@ -121,7 +118,7 @@ Decision: ${loan.decision}
     addLine(`Decision: ${loan.decision}`);
     addLine(`Date Issued: ${loan.timestamp}`);
 
-    // ================= DIGITAL SIGNATURE (GENERATED) =================
+    // ================= DIGITAL SIGNATURE =================
     y += 15;
     checkPage(30);
 
@@ -129,7 +126,6 @@ Decision: ${loan.decision}
     doc.text("Authorized By:", margin, y);
     y += 10;
 
-    // Premium banking signature style
     doc.setFontSize(26);
     doc.setTextColor(0, 51, 153);
     doc.text("M. J. Browers", margin, y);
