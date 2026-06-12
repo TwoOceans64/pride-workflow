@@ -29,6 +29,9 @@ export default function NewLoanPage() {
     e.preventDefault();
     setSubmitting(true);
 
+    // Generate reference number
+    const referenceNumber = "LN-" + Date.now();
+
     const payload = {
       full_name: fullName,
       id_number: idNumber,
@@ -39,6 +42,8 @@ export default function NewLoanPage() {
       loan_amount: loanAmount,
       purpose,
       harvest_month: harvestMonth,
+      reference_number: referenceNumber,
+      timestamp: new Date().toISOString(),
     };
 
     try {
@@ -55,8 +60,7 @@ export default function NewLoanPage() {
         throw new Error("Webhook error");
       }
 
-      const ref = "LN-" + Date.now();
-      setReference(ref);
+      setReference(referenceNumber);
       setSuccess(true);
     } catch (err) {
       console.error("Loan submission error:", err);

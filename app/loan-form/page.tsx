@@ -36,24 +36,32 @@ export default function LoanFormPage() {
     e.preventDefault();
     setSubmitting(true);
 
+    // Generate reference number for this loan
+    const referenceNumber = "LN-" + Date.now();
+
     try {
-      const res = await fetch("https://mjtechsolutions72.app.n8n.cloud/webhook/sacco-loan-review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          full_name: fullName,
-          id_number: idNumber,
-          county,
-          phone,
-          loan_amount: loanAmount,
-          purpose,
-          email,
-        }),
-      });
+      const res = await fetch(
+        "https://YOUR-NEW-N8N-URL/webhook/sacco-loan-review",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            full_name: fullName,
+            id_number: idNumber,
+            county,
+            phone,
+            loan_amount: loanAmount,
+            purpose,
+            email,
+            reference_number: referenceNumber,
+            timestamp: new Date().toISOString(),
+          }),
+        }
+      );
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
-      if (data.success) {
+      if (res.ok) {
         setSuccess(true);
         setTimeout(() => fireConfetti(), 300);
       } else {
