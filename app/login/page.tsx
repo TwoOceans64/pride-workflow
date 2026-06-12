@@ -18,8 +18,11 @@ export default function LoginPage() {
       return;
     }
 
-    // ⭐ SAVE EMAIL FOR DASHBOARD
-    localStorage.setItem("userEmail", email);
+    // ⭐ Normalize email before saving
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // ⭐ Save normalized email for dashboard
+    localStorage.setItem("userEmail", normalizedEmail);
 
     // Redirect to dashboard
     router.push("/dashboard");
