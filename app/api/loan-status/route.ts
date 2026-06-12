@@ -34,17 +34,17 @@ export async function GET(req: Request) {
     const pendingLoans = pendingRows
       .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
       .map((r) => ({
-        full_name: r[0],
-        email: r[1],
-        loan_amount: r[2],
-        purpose: r[3],
-        timestamp: r[4],
-        reference_number: r[5],
+        full_name: r[0],       // A
+        email: r[1],           // B
+        loan_amount: r[2],     // C
+        purpose: r[3],         // D
+        timestamp: r[4],       // E
+        reference_number: r[5],// F
         decision: "Pending",
       }));
 
     // -------------------------------
-    // 2️⃣ READ Approved Loans
+    // 2️⃣ READ Approved Loans (A:I)
     // -------------------------------
     const approvedRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
@@ -54,21 +54,21 @@ export async function GET(req: Request) {
     const approvedRows = approvedRes.data.values || [];
 
     const approvedLoans = approvedRows
-      .filter((r) => r[2]?.toLowerCase() === email.toLowerCase()) // email is column C
+      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase()) // email is column B
       .map((r) => ({
-        full_name: r[0],
-        id_number: r[1],
-        email: r[2],
-        loan_amount: r[3],
-        purpose: r[4],
-        risk_score: r[5],
-        decision: r[6], // "Approved"
-        timestamp: r[7],
-        reference_number: r[8],
+        full_name: r[0],          // A
+        email: r[1],              // B
+        loan_amount: r[2],        // C
+        purpose: r[3],            // D
+        risk_score: r[4],         // E
+        decision: r[5],           // F
+        timestamp: r[6],          // G
+        reference_number: r[7],   // H
+        id_number: r[8],          // I
       }));
 
     // -------------------------------
-    // 3️⃣ READ Declined Loans
+    // 3️⃣ READ Declined Loans (A:I)
     // -------------------------------
     const declinedRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
@@ -78,17 +78,17 @@ export async function GET(req: Request) {
     const declinedRows = declinedRes.data.values || [];
 
     const declinedLoans = declinedRows
-      .filter((r) => r[2]?.toLowerCase() === email.toLowerCase()) // email is column C
+      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase()) // email is column B
       .map((r) => ({
-        full_name: r[0],
-        id_number: r[1],
-        email: r[2],
-        loan_amount: r[3],
-        purpose: r[4],
-        risk_score: r[5],
-        decision: r[6], // "Declined"
-        timestamp: r[7],
-        reference_number: r[8],
+        full_name: r[0],          // A
+        email: r[1],              // B
+        loan_amount: r[2],        // C
+        purpose: r[3],            // D
+        risk_score: r[4],         // E
+        decision: r[5],           // F
+        timestamp: r[6],          // G
+        reference_number: r[7],   // H
+        id_number: r[8],          // I
       }));
 
     // -------------------------------
@@ -96,7 +96,7 @@ export async function GET(req: Request) {
     // -------------------------------
     const combined = [...pendingLoans, ...approvedLoans, ...declinedLoans];
 
-    const uniqueMap = new Map();
+    const uniqueMap = new Map<string, any>();
 
     for (const loan of combined) {
       const key = `${loan.email}-${loan.loan_amount}-${loan.purpose}`;
@@ -105,7 +105,6 @@ export async function GET(req: Request) {
       } else {
         const existing = uniqueMap.get(key);
 
-        // Replace pending with approved/declined
         if (
           existing.decision === "Pending" &&
           loan.decision !== "Pending"
