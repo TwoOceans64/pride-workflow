@@ -270,21 +270,21 @@ export default function HomePage() {
               <p className="text-gray-700 italic">
                 “SACCO Smart helped me get a loan within minutes. The process was smooth and stress‑free.”
               </p>
-              <p className="mt-4 font-semibold text-sacco-blue">— Thabo M.</p>
+              <p className="mt-4 font-semibold text-sacco-blue">— Christopher Chi</p>
             </div>
 
             <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-[#f2e7d3]">
               <p className="text-gray-700 italic">
                 “Their interest rates are much lower than other lenders. Highly recommended.”
               </p>
-              <p className="mt-4 font-semibold text-sacco-blue">— Lerato K.</p>
+              <p className="mt-4 font-semibold text-sacco-blue">— Ejike Oyo </p>
             </div>
 
             <div className="bg-white p-8 rounded-xl shadow-md border-l-4 border-[#f2e7d3]">
               <p className="text-gray-700 italic">
                 “I love how transparent and simple everything is. No hidden fees.”
               </p>
-              <p className="mt-4 font-semibold text-sacco-blue">— Sipho D.</p>
+              <p className="mt-4 font-semibold text-sacco-blue">— Mama D</p>
             </div>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function HomePage() {
           <div>
             <h3 className="text-xl font-bold">SACCO Smart</h3>
             <p className="mt-3 text-sacco-beige/90">
-              Affordable, transparent and secure loans designed for South Africans.
+              Affordable, transparent and secure loans designed for Africa.
             </p>
           </div>
 
