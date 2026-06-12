@@ -22,7 +22,7 @@ export async function GET(req: Request) {
     const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 
     // -------------------------------
-    // READ Pending
+    // READ Pending (Loan Applicants)
     // -------------------------------
     const pendingRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
@@ -31,64 +31,64 @@ export async function GET(req: Request) {
 
     const pendingRows = pendingRes.data.values || [];
 
-    const pendingLoans = pendingRows.filter(
-      (r) => r[1]?.toLowerCase() === email.toLowerCase()
-    );
+    const pendingLoans = pendingRows
+      .filter((r) => r[1]?.toLowerCase() === email.toLowerCase())
+      .map((r) => ({
+        email: r[1],
+        loan_amount: r[2],
+        purpose: r[3],
+        timestamp: r[4],
+        decision: "Pending",
+      }));
 
     // -------------------------------
     // READ Approved
     // -------------------------------
     const approvedRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Log Approved!A2:G",
+      range: "Log Approved!A2:I",
     });
 
     const approvedRows = approvedRes.data.values || [];
 
-    const approvedLoans = approvedRows.filter(
-      (r) => r[1]?.toLowerCase() === email.toLowerCase()
-    );
+    const approvedLoans = approvedRows
+      .filter((r) => r[2]?.toLowerCase() === email.toLowerCase())
+      .map((r) => ({
+        email: r[2],
+        loan_amount: r[3],
+        purpose: r[4],
+        risk_score: r[5],
+        decision: r[6], // "Approved"
+        timestamp: r[7],
+        reference_number: r[8],
+      }));
 
     // -------------------------------
     // READ Declined
     // -------------------------------
     const declinedRes = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Log Declined!A2:G",
+      range: "Log Declined!A2:I",
     });
 
     const declinedRows = declinedRes.data.values || [];
 
-    const declinedLoans = declinedRows.filter(
-      (r) => r[1]?.toLowerCase() === email.toLowerCase()
-    );
+    const declinedLoans = declinedRows
+      .filter((r) => r[2]?.toLowerCase() === email.toLowerCase())
+      .map((r) => ({
+        email: r[2],
+        loan_amount: r[3],
+        purpose: r[4],
+        risk_score: r[5],
+        decision: r[6], // "Declined"
+        timestamp: r[7],
+        reference_number: r[8],
+      }));
 
     // -------------------------------
-    // DEDUPLICATE
+    // COMBINE + DEDUPLICATE
     // -------------------------------
-    const combined = [
-      ...pendingLoans.map((r) => ({
-        email: r[1],
-        loan_amount: r[2],
-        purpose: r[3],
-        timestamp: r[4],
-        status: "Pending",
-      })),
-      ...approvedLoans.map((r) => ({
-        email: r[1],
-        loan_amount: r[2],
-        purpose: r[3],
-        timestamp: r[6],
-        status: "Approved",
-      })),
-      ...declinedLoans.map((r) => ({
-        email: r[1],
-        loan_amount: r[2],
-        purpose: r[3],
-        timestamp: r[6],
-        status: "Declined",
-      })),
-    ];
+    const combined = [...pendingLoans, ...approvedLoans, ...declinedLoans];
 
     const uniqueMap = new Map();
 
@@ -98,7 +98,12 @@ export async function GET(req: Request) {
         uniqueMap.set(key, loan);
       } else {
         const existing = uniqueMap.get(key);
-        if (existing.status === "Pending" && loan.status !== "Pending") {
+
+        // Replace pending with approved/declined
+        if (
+          existing.decision === "Pending" &&
+          loan.decision !== "Pending"
+        ) {
           uniqueMap.set(key, loan);
         }
       }
@@ -106,28 +111,41 @@ export async function GET(req: Request) {
 
     const finalLoans = Array.from(uniqueMap.values());
 
+    // -------------------------------
+    // ANALYTICS
+    // -------------------------------
     const analytics = {
       totalLoans: finalLoans.length,
-      pending: finalLoans.filter((l) => l.status === "Pending").length,
-      approved: finalLoans.filter((l) => l.status === "Approved").length,
-      declined: finalLoans.filter((l) => l.status === "Declined").length,
+      pending: finalLoans.filter(
+        (l) => l.decision?.toLowerCase() === "pending"
+      ).length,
+      approved: finalLoans.filter(
+        (l) => l.decision?.toLowerCase() === "approved"
+      ).length,
+      declined: finalLoans.filter(
+        (l) => l.decision?.toLowerCase() === "declined"
+      ).length,
     };
 
+    // -------------------------------
+    // RECENT ACTIVITY
+    // -------------------------------
     const recentActivity = finalLoans
-      .map((l) => `${l.status} loan of KES ${l.loan_amount} on ${l.timestamp}`)
+      .map(
+        (l) =>
+          `${l.decision} loan of KES ${l.loan_amount} on ${l.timestamp}`
+      )
       .sort((a, b) => {
         const dateA = new Date(a.split(" on ")[1]).getTime();
         const dateB = new Date(b.split(" on ")[1]).getTime();
         return dateB - dateA;
       });
 
-    const notifications: string[] = [];
-
     return NextResponse.json({
       success: true,
       analytics,
       recentActivity,
-      notifications,
+      notifications: [],
     });
   } catch (error: any) {
     console.error("Dashboard Analytics Error:", error);

@@ -72,68 +72,66 @@ export default function LoanStatusPage() {
         <p className="text-gray-600">No loan applications found.</p>
       ) : (
         <div className="space-y-4">
-          {history.map((loan, index) => (
-            <div
-              key={index}
-              className="relative bg-white p-5 rounded-xl shadow border border-sacco-blue/20 overflow-hidden"
-            >
-              {/* Watermark background */}
-              <img
-                src="/sacco-watermark.png"
-                alt="SACCO Watermark"
-                className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none"
-              />
+          {history.map((loan, index) => {
+            const decision = loan.decision?.toLowerCase();
 
-              {/* Content */}
-              <div className="relative z-10">
-                <p className="text-sm text-gray-500">Reference No:</p>
-                <p className="text-lg font-semibold text-sacco-blue">
-                  {loan.reference_number || "N/A"}
-                </p>
+            return (
+              <div
+                key={index}
+                className="relative bg-white p-5 rounded-xl shadow border border-sacco-blue/20 overflow-hidden"
+              >
+                {/* Watermark background */}
+                <img
+                  src="/sacco-watermark.png"
+                  alt="SACCO Watermark"
+                  className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none"
+                />
 
-                <div className="flex justify-between items-center mt-3 mb-2">
-                  <h2 className="text-lg font-semibold text-sacco-blue">
-                    KES {loan.loan_amount}
-                  </h2>
-
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      loan.status === "Approved"
-                        ? "bg-green-100 text-green-700"
-                        : loan.status === "Declined"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
-                  >
-                    {loan.status}
-                  </span>
-                </div>
-
-                <p className="text-gray-700 text-sm">
-                  <strong>Purpose:</strong> {loan.purpose}
-                </p>
-
-                <p className="text-gray-500 text-xs mt-1">
-                  Submitted: {loan.timestamp}
-                </p>
-
-                {loan.risk_score && (
-                  <p className="text-gray-700 text-sm mt-2">
-                    <strong>Risk Score:</strong> {loan.risk_score}
+                {/* Content */}
+                <div className="relative z-10">
+                  <p className="text-sm text-gray-500">Reference No:</p>
+                  <p className="text-lg font-semibold text-sacco-blue">
+                    {loan.reference_number || "N/A"}
                   </p>
-                )}
 
-                {loan.decision && (
+                  <div className="flex justify-between items-center mt-3 mb-2">
+                    <h2 className="text-lg font-semibold text-sacco-blue">
+                      KES {loan.loan_amount}
+                    </h2>
+
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        decision === "approved"
+                          ? "bg-green-100 text-green-700"
+                          : decision === "declined"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {loan.decision || "Pending"}
+                    </span>
+                  </div>
+
                   <p className="text-gray-700 text-sm">
-                    <strong>Reason:</strong> {loan.decision}
+                    <strong>Purpose:</strong> {loan.purpose}
                   </p>
-                )}
 
-                {/* PDF Button Component */}
-                <PDFButton loan={loan} />
+                  <p className="text-gray-500 text-xs mt-1">
+                    Submitted: {loan.timestamp}
+                  </p>
+
+                  {loan.risk_score && (
+                    <p className="text-gray-700 text-sm mt-2">
+                      <strong>Risk Score:</strong> {loan.risk_score}
+                    </p>
+                  )}
+
+                  {/* PDF Button Component */}
+                  <PDFButton loan={loan} />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
