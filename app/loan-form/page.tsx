@@ -41,7 +41,7 @@ export default function LoanFormPage() {
 
     try {
       const res = await fetch(
-        "https://YOUR-NEW-N8N-URL/webhook/sacco-loan-review",
+        "https://mjbrowers93.app.n8n.cloud/webhook/sacco-loan-review",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
